@@ -1,7 +1,7 @@
 // src/pages/Insights.js
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
-import { collection, query, getDocs, orderBy } from 'firebase/firestore'; 
+import { collection, query, getDocs, orderBy, where } from 'firebase/firestore'; 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function Insights({ user }) {
@@ -9,13 +9,16 @@ function Insights({ user }) {
   const [totalFootprint, setTotalFootprint] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all activities for the analysis (corrected dependency)
+  // Fetch activities for the analysis for the CURRENT user
   useEffect(() => {
+     console.log("Current user object:", user); // Keep this line for debugging if you want
     const fetchActivities = async () => {
       if (user) {
         setLoading(true);
+        // Corrected query with the 'where' clause to filter by userId
         const q = query(
           collection(db, "activities"),
+          where("userId", "==", user.uid),
           orderBy("timestamp", "desc")
         );
         const querySnapshot = await getDocs(q);

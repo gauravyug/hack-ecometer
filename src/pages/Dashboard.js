@@ -131,8 +131,9 @@ function Dashboard({user}) {
     setFootprint(calculatedFootprint.toFixed(2));
   };
 
-  const logActivity = async () => {
-    if (!auth.currentUser) {
+  // src/pages/Dashboard.js
+const logActivity = async () => {
+    if (!user) {
       alert("Please log in to log an activity.");
       return;
     }
@@ -142,22 +143,17 @@ function Dashboard({user}) {
     }
     try {
       await addDoc(collection(db, "activities"), {
-        userId: auth.currentUser.uid,
+        userId: user.uid,
         category: category,
         type: type,
         amount: parseFloat(amount),
-        footprint: parseFloat(footprint),
+        footprint: parseFloat(footprint), // Ensure this is a number!
         timestamp: serverTimestamp(),
       });
       alert('Activity logged successfully!');
       setAmount('');
       setFootprint(0);
-      // Refresh activities to update dashboard
-      const q = query(collection(db, "activities"), orderBy("timestamp", "desc"));
-      const querySnapshot = await getDocs(q);
-      const userActivities = [];
-      querySnapshot.forEach((doc) => userActivities.push({ id: doc.id, ...doc.data() }));
-      setAllActivities(userActivities);
+      // Logic to refresh activities...
     } catch (e) {
       console.error("Error adding document: ", e);
       alert('Failed to log activity. Please try again.');

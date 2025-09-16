@@ -26,7 +26,7 @@ const dummyData =[
     "amount": 35.80,
     "footprint": 7.16,
     "timestamp": "2024-05-22T08:15:00.456Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "home_energy",
@@ -74,7 +74,7 @@ const dummyData =[
     "amount": 350.00,
     "footprint": 52.50,
     "timestamp": "2024-06-01T11:00:00.444Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "home_energy",
@@ -130,7 +130,7 @@ const dummyData =[
     "amount": 60.50,
     "footprint": 12.10,
     "timestamp": "2024-06-15T09:00:00.020Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "home_energy",
@@ -170,7 +170,7 @@ const dummyData =[
     "amount": 3500.00,
     "footprint": 875.00,
     "timestamp": "2024-01-20T10:00:00.070Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "food",
@@ -210,7 +210,7 @@ const dummyData =[
     "amount": 20.00,
     "footprint": 4.00,
     "timestamp": "2024-04-02T16:00:00.120Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "shopping",
@@ -266,7 +266,7 @@ const dummyData =[
     "amount": 200.00,
     "footprint": 30.00,
     "timestamp": "2024-03-05T15:00:00.190Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "shopping",
@@ -322,7 +322,7 @@ const dummyData =[
     "amount": 75.00,
     "footprint": 15.00,
     "timestamp": "2024-05-15T08:00:00.260Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "home_energy",
@@ -386,7 +386,7 @@ const dummyData =[
     "amount": 5000.00,
     "footprint": 1250.00,
     "timestamp": "2024-04-15T10:00:00.340Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "shopping",
@@ -426,7 +426,7 @@ const dummyData =[
     "amount": 45.00,
     "footprint": 9.00,
     "timestamp": "2024-06-12T08:30:00.390Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "home_energy",
@@ -490,7 +490,7 @@ const dummyData =[
     "amount": 400.00,
     "footprint": 60.00,
     "timestamp": "2024-05-03T11:00:00.470Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "food",
@@ -538,7 +538,7 @@ const dummyData =[
     "amount": 90.00,
     "footprint": 18.00,
     "timestamp": "2024-03-28T08:15:00.530Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "food",
@@ -594,7 +594,7 @@ const dummyData =[
     "amount": 2800.00,
     "footprint": 700.00,
     "timestamp": "2024-02-01T10:00:00.600Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "food",
@@ -650,7 +650,7 @@ const dummyData =[
     "amount": 55.00,
     "footprint": 11.00,
     "timestamp": "2024-01-20T08:00:00.670Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "shopping",
@@ -714,7 +714,7 @@ const dummyData =[
     "amount": 300.00,
     "footprint": 45.00,
     "timestamp": "2024-06-08T11:00:00.750Z",
-    "userId": "user_bob"
+    "userId": "gaurav.dav84"
   },
   {
     "category": "shopping",
