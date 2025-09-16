@@ -1,0 +1,11 @@
+// src/pages/Profile.js
+function Profile() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Profile</h1>
+      <p>Profile management coming soon!</p>
+    </div>
+  );
+}
+
+export default Profile;
