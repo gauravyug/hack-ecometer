@@ -11,6 +11,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profiles';
 import Insights from './pages/Insights'; 
+import Achievements from './pages/Achievements';
 import BottomTabs from './components/BottomTabs';
 import News from './pages/News'; // Import the new News component
 import './index.css';
@@ -51,6 +52,7 @@ function App() {
                         <Routes>
                             <Route path="/" element={user ? <Dashboard user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
                             <Route path="/insights" element={user ? <Insights user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
+                            <Route path="/achievements" element={user ? <Achievements user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
                             <Route path="/profile" element={user ? <Profile user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
                             <Route path="/news" element={user ? <News user={user} darkMode={darkMode} /> : <Navigate to="/login" />} /> {/* New route for News */}
                             <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
