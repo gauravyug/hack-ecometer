@@ -41,32 +41,33 @@ function News({ darkMode }) {
     <div className={`p-4 ${darkMode ? 'dark bg-gray-900' : 'bg-white'}`}>
       <h1 className="text-2xl font-bold mb-4">Latest Carbon Footprint News</h1>
       
-      {/* Scrollable vertical list */}
-      <div className="space-y-4">
+     {/* New container for reduced width */}
+      <div className="max-w-2xl mx-auto">
         {articles.length > 0 ? (
-          articles.map((article, index) => (
-            <div 
-              key={index} 
-              className="p-4 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 transition-transform hover:scale-[1.01]"
-            >
-              <a href={article.url} target="_blank" rel="noopener noreferrer">
-                {article.image && (
-                  <img 
-                    src={article.image} 
-                    alt={article.title} 
-                    className="w-full h-48 object-cover rounded-md mb-2" 
-                  />
-                )}
-                <h3 className="font-semibold text-lg mb-1">{article.title}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{article.description}</p>
-              </a>
-            </div>
-          ))
+          <div className="space-y-4">
+            {articles.map((article, index) => (
+              <div 
+                key={index} 
+                className="p-4 border border-gray-200 rounded-lg shadow-md bg-gray-100 dark:bg-gray-800 dark:border-gray-700 transition-transform hover:scale-[1.01]"
+              >
+                <a href={article.url} target="_blank" rel="noopener noreferrer">
+                  {article.image && (
+                    <img 
+                      src={article.image} 
+                      alt={article.title} 
+                      className="w-full h-48 object-cover rounded-md mb-2" 
+                    />
+                  )}
+                  <h3 className="font-semibold text-lg mb-1">{article.title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{article.description}</p>
+                </a>
+              </div>
+            ))}
+          </div>
         ) : (
           <p className="text-center">No news articles found.</p>
         )}
       </div>
-      
     </div>
   );
 }

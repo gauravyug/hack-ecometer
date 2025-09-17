@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { Bar } from 'react-chartjs-2';
+import LocationTips from '../components/LocationTips';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -110,16 +111,9 @@ function Dashboard({ user, darkMode }) {
       
     
       
-      {/* Based on your location... box */}
-      <div className="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg mb-6">
-          <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">Based on your location...</h2>
-          <p className="text-sm text-blue-700 dark:text-blue-300 mb-2">You are in a location with a suburban area with a mix of options.</p>
-          <ul className="list-disc list-inside text-sm text-blue-700 dark:text-blue-300 space-y-1">
-              <li>Look for hybrid or electric vehicles to reduce fuel consumption.</li>
-              <li>Check for local composting programs to manage food waste.</li>
-              <li>Optimize your home energy usage by turning off lights and unplugging electronics.</li>
-          </ul>
-      </div>
+     <div className="max-w-3xl mx-auto mb-6">
+      <LocationTips />
+  </div>
         {/* Log Activity Banner */}
       <div className="w-full max-w-lg mx-auto mb-6">
           <Link to="/log-activity">
