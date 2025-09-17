@@ -4,7 +4,6 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from './firebase';
 
 // Components and Pages
-// import Navbar from './components/Navbar'; // Navbar is now replaced by BottomTabs
 import Footer from './components/Footer';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -14,6 +13,7 @@ import Insights from './pages/Insights';
 import BottomTabs from './components/BottomTabs';
 import News from './pages/News'; // Import the new News component
 import LogActivity from './pages/LogActivity'; // New import
+import Achievements from './pages/Achievements';
 import './index.css';
 
 // A simple component to handle logout
@@ -57,6 +57,7 @@ function App() {
                             <Route path="/log-activity" element={user ? <LogActivity user={user} /> : <Navigate to="/login" />} /> {/* New route */}
                             <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
                             <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+                            <Route path="/achievements" element={user ? <Achievements user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
                             <Route path="/signup" element={!user ? <Register /> : <Navigate to="/" />} />
                             <Route path="/dashboard" element={user ? <Dashboard user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
                             {/* New route for logout */}

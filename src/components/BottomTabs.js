@@ -5,7 +5,8 @@ import { Link, useLocation } from 'react-router-dom';
 const navItems = [
   { name: 'Home', icon: HomeIcon, path: '/' },
   { name: 'Insights', icon: ChartBarIcon, path: '/insights' },
-  { name: 'News', icon: NewspaperIcon, path: '/news' }, // Added new item
+  { name: 'Achievements', icon: ChartBarIcon, path: '/achievements' },
+  { name: 'News', icon: NewspaperIcon, path: '/news' },
   { name: 'Profile', icon: UserIcon, path: '/profile' },
   { name: 'Logout', icon: ArrowRightOnRectangleIcon, path: '/logout' }
 ];
