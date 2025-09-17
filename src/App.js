@@ -13,6 +13,7 @@ import Profile from './pages/Profiles';
 import Insights from './pages/Insights'; 
 import BottomTabs from './components/BottomTabs';
 import News from './pages/News'; // Import the new News component
+import LogActivity from './pages/LogActivity'; // New import
 import './index.css';
 
 // A simple component to handle logout
@@ -53,6 +54,7 @@ function App() {
                             <Route path="/insights" element={user ? <Insights user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
                             <Route path="/profile" element={user ? <Profile user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
                             <Route path="/news" element={user ? <News user={user} darkMode={darkMode} /> : <Navigate to="/login" />} /> {/* New route for News */}
+                            <Route path="/log-activity" element={user ? <LogActivity user={user} /> : <Navigate to="/login" />} /> {/* New route */}
                             <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
                             <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
                             <Route path="/signup" element={!user ? <Register /> : <Navigate to="/" />} />

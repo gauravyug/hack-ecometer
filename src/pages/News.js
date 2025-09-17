@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 // You can use the environment variable as a security best practice
-const GNEWS_API_KEY = process.env.REACT_APP_GNEWS_API_KEY || 'YOUR_GNEWS_API_KEY';
+const GNEWS_API_KEY = process.env.REACT_APP_GNEWS_API_KEY || '409cf7045abd13a5c18771e37e6519ca';
 const query = 'carbon footprint';
 const GNEWS_API_URL = `https://gnews.io/api/v4/search?q=${query}&token=${GNEWS_API_KEY}&lang=en`;
 
