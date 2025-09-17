@@ -1,22 +1,32 @@
-// src/App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from './firebase';
 
 // Components and Pages
-import Navbar from './components/Navbar';
+// import Navbar from './components/Navbar'; // Navbar is now replaced by BottomTabs
 import Footer from './components/Footer';
 import Login from './pages/Login';
-import Register from './pages/Register'; // <-- NEW: Import the Register component
+import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profiles';
 import Insights from './pages/Insights'; 
+import BottomTabs from './components/BottomTabs';
+import News from './pages/News'; // Import the new News component
 import './index.css';
+
+// A simple component to handle logout
+const Logout = () => {
+    useEffect(() => {
+        signOut(auth);
+    }, []);
+    return <Navigate to="/login" />;
+};
 
 function App() {
     const [user, setUser] = useState(null);
     const [isAuthReady, setIsAuthReady] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -25,15 +35,6 @@ function App() {
         });
         return () => unsubscribe();
     }, []);
-    
-    const handleLogout = async () => {
-        try {
-            await signOut(auth);
-            console.log("User logged out successfully.");
-        } catch (error) {
-            console.error("Error logging out:", error.message);
-        }
-    };
 
     if (!isAuthReady) {
         return <p>Loading app...</p>;
@@ -41,24 +42,34 @@ function App() {
 
     return (
         <Router>
-            <div className="flex flex-col min-h-screen">
-                <Navbar user={user} onLogout={handleLogout} />
-                <div className="flex-grow container mx-auto p-4">
-                    <Routes>
-                        {/* Pass the user prop to the pages */}
-                        <Route path="/" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
-                        <Route path="/insights" element={user ? <Insights user={user} /> : <Navigate to="/login" />} />
-                        <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
-                        
-                        {/* The Login page is only accessible if the user is NOT logged in */}
-                        <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-            <Route path="/signup" element={!user ? <Register /> : <Navigate to="/" />} /> {/* <-- NEW: Added a route for /signup */}
-                        
-                        {/* The dashboard route points to the main dashboard page */}
-                        <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
-                    </Routes>
+            <div className={darkMode ? 'dark bg-gray-900 text-white' : 'bg-white text-gray-900'}>
+                <div className="flex flex-col min-h-screen">
+                    {/* The Navbar has been removed for a mobile-first design */}
+                    
+                    {/* Main content area with bottom padding */}
+                    <div className="flex-grow container mx-auto p-4 pb-16">
+                        <Routes>
+                            <Route path="/" element={user ? <Dashboard user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
+                            <Route path="/insights" element={user ? <Insights user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
+                            <Route path="/profile" element={user ? <Profile user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
+                            <Route path="/news" element={user ? <News user={user} darkMode={darkMode} /> : <Navigate to="/login" />} /> {/* New route for News */}
+                            <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+                            <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+                            <Route path="/signup" element={!user ? <Register /> : <Navigate to="/" />} />
+                            <Route path="/dashboard" element={user ? <Dashboard user={user} darkMode={darkMode} /> : <Navigate to="/login" />} />
+                            {/* New route for logout */}
+                            <Route path="/logout" element={<Logout />} />
+                        </Routes>
+                    </div>
+                    
+                    {/* Render BottomTabs and Footer conditionally */}
+                    {user && (
+                        <>
+                            <BottomTabs />
+                            <Footer />
+                        </>
+                    )}
                 </div>
-                <Footer />
             </div>
         </Router>
     );
