@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "firebase": "^12.2.1",
     "firebase-admin": "^13.5.0",
+    "jsqr": "^1.4.0",
     "react": "^19.1.1",
     "react-circular-progressbar": "^2.2.0",
     "react-dom": "^19.1.1",

@@ -1,10 +1,11 @@
 // src/pages/Dashboard.js
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
-import { collection, query, where, getDocs, orderBy, setDoc, doc, getDoc, addDoc, serverTimestamp } from 'firebase/firestore'; 
+import { collection, query, getDocs, orderBy, addDoc, serverTimestamp, doc, getDoc } from 'firebase/firestore'; 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { getLocationBasedSuggestions } from '../utils/locationSuggestions';
+import BarcodeScanner from '../components/BarcodeScanner';
 
 // Emission factors from your calculator
 const emissionFactors = {
@@ -13,8 +14,8 @@ const emissionFactors = {
   shopping: { electronics: 3, clothing: 1.5, groceries: 0.5 },
   home_energy: { electricity: 0.45, natural_gas: 0.2, oil: 0.3 }
 };
-    
-function Dashboard({user}) {
+
+function Dashboard({ user }) {
   const [allActivities, setAllActivities] = useState([]);
   const [filteredActivities, setFilteredActivities] = useState([]);
   const [totalFootprint, setTotalFootprint] = useState(0);
@@ -39,29 +40,19 @@ function Dashboard({user}) {
     }
   }, []);
 
-  // Fetch user's goal
+  // Fetch user's goal and activities
   useEffect(() => {
-    const fetchGoal = async () => {
-      if (auth.currentUser) {
-        try {
-          const userDocRef = doc(db, "users", auth.currentUser.uid);
-          const userDocSnap = await getDoc(userDocRef);
-          if (userDocSnap.exists() && userDocSnap.data().goal) {
-            setGoal(userDocSnap.data().goal);
-          }
-        } catch (e) {
-          console.error("Error fetching user goal:", e);
-        }
-      }
-    };
-    fetchGoal();
-  }, [auth.currentUser]);
-
-  // Fetch all activities
-  useEffect(() => {
-    const fetchActivities = async () => {
-      if (auth.currentUser) {
+    const fetchData = async () => {
+      if (user) {
         setLoading(true);
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists() && userDocSnap.data().goal) {
+          setGoal(userDocSnap.data().goal);
+        } else {
+          setGoal(null);
+        }
+        
         const q = query(
           collection(db, "activities"),
           orderBy("timestamp", "desc")
@@ -76,8 +67,8 @@ function Dashboard({user}) {
         setLoading(false);
       }
     };
-    fetchActivities();
-  }, [auth.currentUser]);
+    fetchData();
+  }, [user]);
 
   // Filter activities and calculate total footprint based on timeframe
   useEffect(() => {
@@ -121,7 +112,6 @@ function Dashboard({user}) {
     return chartData;
   };
 
-  // Calculator Logic
   const calculateFootprint = () => {
     let factor = 0;
     if (emissionFactors[category] && emissionFactors[category][type]) {
@@ -131,8 +121,7 @@ function Dashboard({user}) {
     setFootprint(calculatedFootprint.toFixed(2));
   };
 
-  // src/pages/Dashboard.js
-const logActivity = async () => {
+  const logActivity = async () => {
     if (!user) {
       alert("Please log in to log an activity.");
       return;
@@ -147,17 +136,32 @@ const logActivity = async () => {
         category: category,
         type: type,
         amount: parseFloat(amount),
-        footprint: parseFloat(footprint), // Ensure this is a number!
+        footprint: parseFloat(footprint),
         timestamp: serverTimestamp(),
       });
       alert('Activity logged successfully!');
       setAmount('');
       setFootprint(0);
-      // Logic to refresh activities...
+      const q = query(collection(db, "activities"), orderBy("timestamp", "desc"));
+      const querySnapshot = await getDocs(q);
+      const userActivities = [];
+      querySnapshot.forEach((doc) => userActivities.push({ id: doc.id, ...doc.data() }));
+      setAllActivities(userActivities);
     } catch (e) {
       console.error("Error adding document: ", e);
       alert('Failed to log activity. Please try again.');
     }
+  };
+
+  const handleScanSuccess = (scannedProduct) => {
+    setCategory(scannedProduct.category);
+    setType(scannedProduct.type);
+    setAmount(scannedProduct.amount);
+    setFootprint(scannedProduct.footprint.toFixed(2));
+  };
+
+  const handleScanError = (error) => {
+    console.error("Scanning failed:", error);
   };
 
   const handleCategoryChange = (e) => {
@@ -185,15 +189,25 @@ const logActivity = async () => {
     }
   };
   
+  const handleImageUpload = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    console.log("Image selected:", file.name);
+    // TODO: Send this file to a backend service for analysis
+    alert("Image selected! Now to send it to the Vision API...");
+  }
+};
   const chartData = getChartData();
   const locationSuggestions = location ? getLocationBasedSuggestions(location.latitude, location.longitude) : null;
   const goalProgressPercentage = goal ? Math.min((totalFootprint / goal) * 100, 100) : 0;
-  const userName = user?.displayName || 'Eco-Warrior'; // Get the user's name or a default value
+  const userName = user?.displayName || 'Eco-Warrior';
+  
   if (loading) return <p>Loading dashboard...</p>;
 
   return (
     <div className="p-4">
       <h1 className="text-3xl font-bold mb-6">Welcome, {userName}!</h1>
+
       {locationSuggestions && (
         <div className="bg-blue-100 p-6 rounded-lg shadow-md mb-8">
           <h2 className="text-2xl font-semibold mb-2">Based on your location...</h2>
@@ -205,15 +219,13 @@ const logActivity = async () => {
           </ul>
         </div>
       )}
-
-      {/* Circular Progress Bars at the top */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        {/* Total Footprint Card */}
         <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
           <div className="w-40 h-40">
             <CircularProgressbar
               value={totalFootprint}
-              maxValue={1000} // Adjust this max value as needed
+              maxValue={1000}
               text={`${totalFootprint.toFixed(2)}`}
               styles={buildStyles({
                 textColor: '#000',
@@ -226,7 +238,6 @@ const logActivity = async () => {
           <p className="text-gray-500">kg CO₂ ({timeframe})</p>
         </div>
 
-        {/* Goal Progress Card */}
         <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center justify-center text-center">
           <div className="w-40 h-40">
             <CircularProgressbar
@@ -270,23 +281,53 @@ const logActivity = async () => {
       {filteredActivities.length > 0 && (
         <>
           <h2 className="text-2xl font-semibold mb-4">Footprint by Category</h2>
-          <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={chartData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="Carbon Footprint (kg CO₂) " fill="#4CAF50" />
-              </BarChart>
+          <div className="bg-white p-6 rounded-lg shadow-md mb-8" style={{ width: '100%', height: '350px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="Carbon Footprint (kg CO₂) " fill="#4CAF50" />
+            </BarChart>
             </ResponsiveContainer>
           </div>
         </>
       )}
-
-      {/* Activity Logging Form at the bottom */}
+      
       <div className="w-full max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold mb-6 text-center">Log Your Activities</h2>
+        
+        {/* NEW: Added Image Upload section */}
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold mb-2">Scan with Image</h3>
+          <input 
+            type="file" 
+            accept="image/*" 
+            onChange={handleImageUpload} 
+            className="w-full p-2 border rounded-md" 
+          />
+        </div>
+        
+        {/* NEW: Added Barcode Scanner and Simulate Scan Button */}
+        <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 mb-6 items-center">
+          <div className="flex-1 w-full md:w-auto">
+            <BarcodeScanner onScanSuccess={handleScanSuccess} onScanError={handleScanError} />
+          </div>
+          <button 
+            onClick={() => handleScanSuccess({
+              category: "food",
+              type: "vegetables",
+              amount: 0.5,
+              footprint: 1.0
+            })}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex-1 w-full md:w-auto"
+          >
+            Simulate Scan
+          </button>
+        </div>
+        
+        {/* Remaining Form Fields */}
         <div className="mb-4">
           <label className="block text-gray-700 font-bold mb-2">Category</label>
           <select value={category} onChange={handleCategoryChange} className="w-full p-3 border rounded-md">
