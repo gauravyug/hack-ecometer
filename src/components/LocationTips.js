@@ -71,8 +71,8 @@ function LocationTips() {
     }
 
     return (
-        <div className="max-w-3xl mx-auto mb-6">
-            <div className="bg-blue-100 p-4 rounded-lg shadow-sm">
+       <div className="mb-6 p-6 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-md cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-sm">
                 <h2 className="text-xl font-semibold mb-2">Based on your location...</h2>
                 <ul className="list-disc list-inside space-y-1">
                     {tips.map((tip, index) => (
