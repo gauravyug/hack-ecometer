@@ -9,7 +9,7 @@ const emissionFactors = {
     flight: 0.15,
   },
   food: {
-    beef: 27,
+    mutton: 27,
     chicken: 6.9,
     vegetables: 2,
   },
