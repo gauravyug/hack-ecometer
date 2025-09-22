@@ -107,14 +107,6 @@ function Insights({ user, darkMode }) {
         setChartData(data);
     }, [filteredActivities]);
 
-    // In Insights.js (when rendering)
-    <button
-  onClick={() => handleDelete(activity.id)}
-  className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
->
-  Delete
-</button>
-
     // Handler
   // AFTER (no auth usage)
 const handleDelete = async (id) => {

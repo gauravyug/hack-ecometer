@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { db, auth } from '../firebase';
 import { addDoc, collection, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
 import BarcodeScanner from '../components/BarcodeScanner';
 import jsQR from 'jsqr';
+import React, { useState, useEffect, useRef } from 'react';
 
 const emissionFactors = {
   travel: {
@@ -83,7 +83,7 @@ function LogActivity({user}) {
       navigate('/insights');
     } else {
             await addDoc(collection(db, "activities"), {
-                userId: auth.currentUser.uid,
+                userId: user.uid,
                 category: category,
                 type: type,
                 amount: parseFloat(amount),
@@ -261,6 +261,7 @@ function LogActivity({user}) {
 
                 {/* Form Box - separated panel */}
                 <div className="w-full lg:w-3/4 bg-gray-100 dark:bg-gray-800 p-6 rounded-lg shadow-md border-2 border-gray-300 dark:border-gray-700">
+
                     <div className="mb-4">
                         <label className="block text-gray-700 dark:text-gray-300 font-bold mb-2">Category</label>
                         <select value={category} onChange={handleCategoryChange} className="w-full p-3 border rounded-md dark:bg-gray-700 dark:text-white">
@@ -296,49 +297,10 @@ function LogActivity({user}) {
                         className="w-full p-3 text-white font-bold rounded-md bg-green-500 hover:bg-green-600 transition-colors"
                         disabled={loading}
                     >
-                        {loading ? 'Logging...' : 'Log Activity'}
+                        {loading ? "Saving..." : editingActivity ? "Update Activity" : "Log Activity"}
                     </button>
                     {error && <p className="mt-2 text-red-500 text-sm">{error}</p>}
                 </div>
-
-                <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-300 font-bold mb-2">Category</label>
-                    <select value={category} onChange={handleCategoryChange} className="w-full p-3 border rounded-md dark:bg-gray-700 dark:text-white">
-                        {Object.keys(emissionFactors).map(cat => (
-                            <option key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-300 font-bold mb-2">Type</label>
-                    <select value={type} onChange={handleTypeChange} className="w-full p-3 border rounded-md dark:bg-gray-700 dark:text-white">
-                        {Object.keys(emissionFactors[category]).map(t => (
-                            <option key={t} value={t}>{t.replace(/_/g, ' ').charAt(0).toUpperCase() + t.replace(/_/g, ' ').slice(1)}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-300 font-bold mb-2">{getPlaceholderText()}</label>
-                    <input
-                        type="number"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        onBlur={calculateFootprint}
-                        placeholder={getPlaceholderText()}
-                        className="w-full p-3 border rounded-md dark:bg-gray-700 dark:text-white"
-                    />
-                </div>
-                <div className="mb-6">
-                    <p className="text-gray-700 dark:text-gray-300 font-bold">Estimated Footprint: <span className="text-green-600 font-bold">{footprint} kg CO₂</span></p>
-                </div>
-                <button
-                    onClick={logActivity}
-                    className="w-full p-3 text-white font-bold rounded-md bg-green-500 hover:bg-green-600 transition-colors"
-                    disabled={loading}
-                >
-                    {loading ? "Saving..." : editingActivity ? "Update Activity" : "Log Activity"}
-                </button>
-                {error && <p className="mt-2 text-red-500 text-sm">{error}</p>}
             </div>
         </div>
     );
