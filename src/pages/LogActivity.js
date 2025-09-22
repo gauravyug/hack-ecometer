@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { db, auth } from '../firebase';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
+
 
 const emissionFactors = {
   travel: {
@@ -25,13 +27,26 @@ const emissionFactors = {
   },
 };
 
-function LogActivity() {
+function LogActivity({user}) {
     const [category, setCategory] = useState('travel');
     const [type, setType] = useState('car');
     const [amount, setAmount] = useState('');
     const [footprint, setFootprint] = useState(0);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const location = useLocation();
+    const navigate = useNavigate();
+    // activity that came from Insights via navigate('/log', { state: { activity } })
+    const editingActivity = location.state?.activity || null;
+
+    useEffect(() => {
+        if (editingActivity) {
+        setCategory(editingActivity.category);
+        setType(editingActivity.type);
+        setAmount(editingActivity.amount);
+        setFootprint(editingActivity.footprint);
+        }
+     }, [editingActivity]);
 
     const calculateFootprint = () => {
         let factor = 0;
@@ -43,7 +58,7 @@ function LogActivity() {
     };
 
     const logActivity = async () => {
-        if (!auth.currentUser) {
+        if (!user) {
             setError("Please log in to log an activity.");
             return;
         }
@@ -55,6 +70,17 @@ function LogActivity() {
         setLoading(true);
         setError(null);
         try {
+            if (editingActivity) {
+      await updateDoc(doc(db, "activities", editingActivity.id), {
+        category,
+        type,
+        amount: parseFloat(amount),
+        footprint: parseFloat(footprint),
+        updatedAt: serverTimestamp(),
+      });
+      alert("Activity updated successfully!");
+      navigate('/insights');
+    } else {
             await addDoc(collection(db, "activities"), {
                 userId: auth.currentUser.uid,
                 category: category,
@@ -62,8 +88,11 @@ function LogActivity() {
                 amount: parseFloat(amount),
                 footprint: parseFloat(footprint),
                 createdAt: serverTimestamp(),
-            });
+            }); 
+        
             alert('Activity logged successfully!');
+            navigate('/insights');
+        }
             setAmount('');
             setFootprint(0);
         } catch (e) {
@@ -155,7 +184,7 @@ function LogActivity() {
                     className="w-full p-3 text-white font-bold rounded-md bg-green-500 hover:bg-green-600 transition-colors"
                     disabled={loading}
                 >
-                    {loading ? 'Logging...' : 'Log Activity'}
+                    {loading ? "Saving..." : editingActivity ? "Update Activity" : "Log Activity"}
                 </button>
                 {error && <p className="mt-2 text-red-500 text-sm">{error}</p>}
             </div>

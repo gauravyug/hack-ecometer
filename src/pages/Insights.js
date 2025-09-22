@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { useLocation } from 'react-router-dom';
+import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Bar } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
@@ -107,6 +107,35 @@ function Insights({ user, darkMode }) {
         setChartData(data);
     }, [filteredActivities]);
 
+    // In Insights.js (when rendering)
+    <button
+  onClick={() => handleDelete(activity.id)}
+  className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+>
+  Delete
+</button>
+
+    // Handler
+  // AFTER (no auth usage)
+const handleDelete = async (id) => {
+  if (!window.confirm("Delete this activity?")) return;
+  try {
+    await deleteDoc(doc(db, "activities", id));
+    setActivities(prev => prev.filter(a => a.id !== id));
+  } catch (e) {
+    console.error("Error deleting activity:", e);
+    alert(e?.message || String(e));
+  }
+};
+
+
+    const navigate = useNavigate();
+
+    const handleEdit = (activity) => {
+    navigate('/log-activity', { state: { activity } });
+  };
+
+
     const data = {
         labels: chartData.map(item => item.name.charAt(0).toUpperCase() + item.name.slice(1)),
         datasets: [
@@ -204,6 +233,20 @@ function Insights({ user, darkMode }) {
                                     <p className="text-sm text-gray-500">
                                         Logged on: {new Date(activity.createdAt).toLocaleString()}
                                     </p>
+                                    <div className="mt-2 flex gap-3">
+    <button
+      onClick={() => handleEdit(activity)}
+      className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+    >
+      Edit
+    </button>
+    <button
+      onClick={() => handleDelete(activity.id)}
+      className="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+    >
+      Delete
+    </button>
+  </div>
                                 </div>
                             ))}
                         </div>
@@ -289,5 +332,6 @@ function GoalSettings({ totalFootprint }) {
                 </div>
             )}
         </div>
+        
     );
 }
